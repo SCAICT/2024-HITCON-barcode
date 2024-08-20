@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barcode Game</title>
+</head>
+<body>
+    <h1>Welcome, <%= username %>!</h1>
+    <p>Scan the barcode as fast as you can!</p>
+    <button id="start">Start Game</button>
+
+    <script>
+        const startButton = document.getElementById('start');
+        startButton.addEventListener('click', () => {
+            const startTime = Date.now();
+            
+            const endTime = Date.now();
+            const gameTime = endTime - startTime;
+
+            fetch('/save-time', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: '<%= username %>', time: gameTime })
+            }).then(response => {
+                if (response.ok) {
+                    window.location.href = '/leaderboard';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

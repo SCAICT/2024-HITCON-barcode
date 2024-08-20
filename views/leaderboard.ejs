@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard</title>
+</head>
+<body>
+    <h1>Leaderboard</h1>
+    <ul>
+        <% leaderboard.forEach(entry => { %>
+            <li><%= entry.username %>: <%= entry.time %>ms</li>
+        <% }); %>
+    </ul>
+    <a href="/">Play Again</a>
+</body>
+</html>
