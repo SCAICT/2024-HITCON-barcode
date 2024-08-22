@@ -1,17 +1,46 @@
+<!-- @format -->
+
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leaderboard</title>
-</head>
-<body>
-    <h1>Leaderboard</h1>
-    <ul>
-        <% leaderboard.forEach(entry => { %>
-            <li><%= entry.username %>: <%= entry.time %>ms</li>
-        <% }); %>
-    </ul>
-    <a href="/">Play Again</a>
-</body>
+<html lang="zh-Hant">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>中電 Bar</title>
+        <link rel="stylesheet" href="/style.css" />
+        <link rel="icon" type="image/png" href="beer.png">
+    </head>
+    <body>
+        <main>
+            <img src="/beer.png" class="logo" alt="">
+            <h1>中電 Bar</h1>
+            <p>HITCON 中電會擺攤小遊戲</p>
+            <% if (username) { %>
+            <button onclick="window.location.href='/game'">開始遊戲</button>
+            <% } else { %>
+            <button onclick="window.location.href='/login'">登入</button>
+            <% } %>
+
+            <div class="line"></div>
+            <h2>排行榜</h2>
+            <% leaderboard.forEach(entry => { %>
+            <div class="player">
+                <img src="" alt="" />
+                <div>
+                    <h3><%= entry.username %></h3>
+                    <span><%= entry.time %></span>
+                </div>
+            </div>
+            <% }); %> <% if (leaderboard.length === 0) { %>
+            <p>尚無排行紀錄</p>
+            <% } %>
+            <footer>
+                <% if (username) { %>
+                <p>
+                    <%= username %>
+                    <a href="/logout">(登出)</a>
+                </p>
+                <% } %>
+            </footer>
+        </main>
+    </body>
 </html>
