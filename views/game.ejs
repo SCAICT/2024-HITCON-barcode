@@ -78,10 +78,17 @@
                             response.json().then(data => {
                                 const discordIDOptions =
                                     document.getElementById("discordIDOptions");
+                                // response.data = response.data.map(user => {
+                                // return {
+                                //     avatar: user.avatar,
+                                //   username: user.user.username,
+                                // id: user.user.id,
+                                //}
                                 data.forEach(user => {
                                     const option =
                                         document.createElement("option");
-                                    option.value = user.discordID;
+                                    option.value = user.id;
+                                    option.textContent = user.username;
                                     discordIDOptions.appendChild(option);
                                 });
                             });
