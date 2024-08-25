@@ -6,7 +6,7 @@ This website features a mini-game that SCAICT hosted at HITCON 2024, which is no
 
 ## Overview
 
-This project is a website featuring a mini-game where players need to recreate a randomly generated EAN-8 barcode using Popsicle sticks, with one side colored black. Originally developed as a Node.js project for HITCON 2024, the game is now open to the public, though rewards are no longer distributed. The project has been open-sourced, and this documentation will guide you through how the game works, how to play it, and how to set it up on your own server.
+Players need to recreate a randomly generated EAN-8 barcode using Popsicle sticks, with one side colored black. Originally developed as a Node.js project for HITCON 2024, the game is now open to the public, though rewards are no longer distributed. The project has been open-sourced, and this documentation will guide you through how the game works, how to play it, and how to set it up on your own server.
 
 ## Table of Contents
 
