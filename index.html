@@ -1,49 +1,78 @@
 <!-- @format -->
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-Hant">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>EAN-8 Barcode Scanner</title>
+        <title>中電 Bar</title>
+        <link rel="stylesheet" href="static/style.css" />
+        <link rel="icon" type="image/png" href="static/beer.png" />
         <script
             src="https://unpkg.com/html5-qrcode"
             type="text/javascript"
         ></script>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                text-align: center;
-                margin-top: 50px;
-            }
-            #reader {
-                width: 300px;
-                margin: 0 auto;
-            }
-            #result {
-                margin-top: 20px;
-                font-size: 1.2em;
-                color: green;
-            }
-        </style>
     </head>
     <body>
-        <h1>EAN-8 Barcode Scanner</h1>
-        <div id="reader"></div>
-        <div id="result">Waiting for scan...</div>
+        <main class="afinished">
+            <section id="part1">
+                <img src="static/beer.png" class="logo" alt="" />
+                <h1>中電 Bar</h1>
+                <p id="result">計時器開始時請使用冰棒棍排出指定條碼。</p>
+                <div class="timer">00:00</div>
+                <div class="line"></div>
+                <div id="reader"></div>
+                <button id="start">開始計時</button>
+            </section>
+            <section id="part2">
+                <img src="/beer.png" class="logo" alt="" />
+                <h1>遊戲結束</h1>
+                <p id="score">恭喜您完成遊戲！</p>
+                <div class="line"></div>
+                <button onclick="location.reload()">再玩一次</button>
+                <br /><br />
+                到
+                <a href="https://github.com/SCAICT/2024-HITCON-barcode"
+                    >GitHub</a
+                >
+                給我們一顆星星吧！
+            </section>
+            <footer>
+                © 2024 SCAICT @HITCON<br />View on
+                <a href="https://github.com/SCAICT/2024-HITCON-barcode"
+                    >GitHub</a
+                >
+            </footer>
+        </main>
 
         <script>
+            // to test scan success: onScanSuccess(code,"")
             const html5QrCode = new Html5Qrcode("reader");
-
+            const header = document.querySelector("h1");
+            const result = document.getElementById("result");
+            let start = true,
+                startTime,
+                code,
+                interval,
+                gameTime;
             function onScanSuccess(decodedText, decodedResult) {
-                document.getElementById(
-                    "result"
-                ).textContent = `Scanned Code: ${decodedText}`;
+                if (start) return;
+                result.textContent = decodedText;
+                console.log(code);
+                if (decodedText == code) {
+                    console.log("correct");
+                    const endTime = Date.now();
+                    gameTime = (endTime - startTime) / 1000;
+                    clearInterval(interval);
+                    html5QrCode.stop();
+                    document.querySelector(
+                        "#score"
+                    ).textContent = `遊戲結束，您的時間為 ${gameTime} 秒`;
+                    document.querySelector("main").classList.add("finished");
+                }
             }
 
-            function onScanFailure(error) {
-            }
-
+            function onScanFailure(error) {}
             const config = { fps: 10, qrbox: 250 };
 
             html5QrCode
@@ -56,6 +85,38 @@
                 .catch(err => {
                     console.error(`Unable to start scanning, error: ${err}`);
                 });
+
+            const startButton = document.getElementById("start");
+            startButton.addEventListener("click", () => {
+                start = false;
+                startTime = Date.now();
+                startButton.style.display = "none";
+                //generate random 7 digit number
+                code = Math.floor(1000000 + Math.random() * 9000000);
+                // calculate ean-8 checksum
+                let sum = 0;
+                for (let i = 0; i < 7; i++) {
+                    sum += parseInt((code + "")[i]) * (i % 2 === 0 ? 3 : 1);
+                }
+                code = code + "" + ((10 - (sum % 10)) % 10);
+                header.textContent = code;
+                document.getElementById(
+                    "result"
+                ).textContent = `請使用冰棒棍排出條碼`;
+                const timer = document.querySelector(".timer");
+                interval = setInterval(() => {
+                    const elapsedTime = Date.now() - startTime;
+                    const seconds = Math.floor(elapsedTime / 1000);
+                    const minutes = Math.floor(seconds / 60);
+                    const remainingSeconds = seconds % 60;
+                    const formattedTime = `${minutes
+                        .toString()
+                        .padStart(2, "0")}:${remainingSeconds
+                        .toString()
+                        .padStart(2, "0")}`;
+                    timer.textContent = formattedTime;
+                }, 1000);
+            });
         </script>
     </body>
 </html>

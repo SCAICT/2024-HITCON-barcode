@@ -1,0 +1,61 @@
+<!-- @format -->
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>EAN-8 Barcode Scanner</title>
+        <script
+            src="https://unpkg.com/html5-qrcode"
+            type="text/javascript"
+        ></script>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                text-align: center;
+                margin-top: 50px;
+            }
+            #reader {
+                width: 300px;
+                margin: 0 auto;
+            }
+            #result {
+                margin-top: 20px;
+                font-size: 1.2em;
+                color: green;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>EAN-8 Barcode Scanner</h1>
+        <div id="reader"></div>
+        <div id="result">Waiting for scan...</div>
+
+        <script>
+            const html5QrCode = new Html5Qrcode("reader");
+
+            function onScanSuccess(decodedText, decodedResult) {
+                document.getElementById(
+                    "result"
+                ).textContent = `Scanned Code: ${decodedText}`;
+            }
+
+            function onScanFailure(error) {
+            }
+
+            const config = { fps: 10, qrbox: 250 };
+
+            html5QrCode
+                .start(
+                    { facingMode: "environment" },
+                    config,
+                    onScanSuccess,
+                    onScanFailure
+                )
+                .catch(err => {
+                    console.error(`Unable to start scanning, error: ${err}`);
+                });
+        </script>
+    </body>
+</html>
