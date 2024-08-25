@@ -24,7 +24,7 @@
             <h2>排行榜</h2>
             <% leaderboard.forEach(entry => { %>
             <div class="player">
-                <img src="" alt="" />
+                <img src="<%= entry.avatar %>" alt="" />
                 <div>
                     <h3><%= entry.username %></h3>
                     <span><%= entry.time %></span>

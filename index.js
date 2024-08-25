@@ -38,13 +38,14 @@ app.get("/login", (req, res) => {
 
 // Handle callback
 app.get("/callback", (req, res) => {
-    console.log(req.query);
+    console.log(req.headers, req.query);
     // http://localhost:3000/callback?username=elvismao&user_id=685630394431045863&avatar=https%3A%2F%2Fcdn.discordapp.com%2Favatars%2F685630394431045863%2Fa5344f225a7f95da57294a9e1ca73711.png&email=info%40elvismao.com&headers={%27Authorization%27%3A+%27Bearer+5c1gRkHUAD5WHW53uWBApa5CWBsv6F%27}
     const username = req.query.username + "";
     // if (whitelistedUsers.includes(username) || true) {
     const token = Math.random().toString(36).substring(2);
     // get all response cookie and set it to sessionTokens
-    const cookies = req.headers["set-cookie"];
+    const cookies ="";
+    console.log(cookies);
     sessionTokens[token] = { username, cookies };
     res.cookie("token", token).redirect("/");
     // } else {
@@ -54,8 +55,11 @@ app.get("/callback", (req, res) => {
 
 app.get("/game", (req, res) => {
     const token = req.cookies.token;
-    if (token && sessionTokens[token]) {
-        res.render("game");
+    const username = sessionTokens[token].username;
+    if (token && sessionTokens[token]) {    
+        res.render("game", {
+                username,
+            });
     } else {
         res.redirect("/");
     }
@@ -64,9 +68,11 @@ app.get("/game", (req, res) => {
 // Save game time
 app.post("/save-time", (req, res) => {
     const { discordID, gameTime } = req.body;
+    // get uername from users
+    const username = users.find(user => user.id === discordID).username;
     db.run(
         "INSERT INTO leaderboard (username, time) VALUES (?, ?)",
-        [discordID, gameTime],
+        [username, gameTime],
         function (err) {
             if (err) {
                 return res.status(500).send("領取獎勵失敗");
@@ -105,6 +111,7 @@ app.get("/userList", (req, res) => {
     if (!req.cookies.token || !sessionTokens[req.cookies.token]) {
         return res.status(401).send("Unauthorized");
     }
+    console.log(sessionTokens[req.cookies.token].cookies);
     //http fetch
     axios
         .get("https://store.scaict.org/api/mlist", {
@@ -136,14 +143,24 @@ app.get("/", (req, res) => {
         "SELECT username, time FROM leaderboard ORDER BY time ASC",
         [],
         (err, rows) => {
-            // turn each time into a string in format of mm:ss.sss
+            // turn each time into a string in format of mm:ss
             rows = rows.map(row => {
-                const minutes = Math.floor(row.time / 60000);
-                const seconds = ((row.time % 60000) / 1000).toFixed(3);
+                const minutes = Math.floor(row.time / 60);
+                const seconds = Math.floor((row.time % 60));
+                let avatar;
+                if (users.find(user => user.username === row.username)) {
+              
+                    avatar = users.find(
+                        user => user.username === row.username
+                    ).avatar;      console.log(avatar);
+                } else {
+                    avatar = null;
+                }
+
                 return {
                     username: row.username,
-                    time: `${minutes}:${seconds.padStart(6, "0")}`,
-                    avatar: users.find(user => user.username === row.username)
+                    time: `${minutes}:${seconds}`,
+                    avatar,
                 };
             });
             if (err) {
@@ -165,6 +182,6 @@ app.get("/", (req, res) => {
     );
 });
 
-app.listen(3000, () => {
+app.listen(3030, () => {
     console.log("Server is running on http://localhost:3000");
 });
